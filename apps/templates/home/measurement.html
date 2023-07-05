@@ -1,0 +1,669 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+<br />
+<div class="row">
+  <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+    <div class="card">
+      <div class="card-header p-3 pt-2">
+        <div
+                class="icon icon-lg icon-shape bg-gradient-dark shadow-success text-center border-radius-xl mt-n4 position-absolute">
+          <i class="material-icons opacity-10">computer</i>
+        </div>
+        <br />
+        <p class="text-end text-sm mb-0 text-capitalize">FS address
+        <div class="input-group input-group-outline">
+          <label class="form-label">Type here...</label>
+          <input type="text" class="form-control" id="fs-address">
+        </div>
+        <div class="pt-1">
+          <p class="text-sm mb-0" id="selected-fs">Address "{{fs}}" selected</p>
+        </div>
+
+        <li class="list-group-item border-0 px-0">
+          <div class="form-check form-switch ps-0">
+            <input class="form-check-input ms-auto" type="checkbox" id="FS_type_check" checked="">
+            <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="FS_type_check">Check if MSO/DPO/DSA</label>
+          </div>
+        </li>
+
+        <p class="text-end text-sm mb-0 text-capitalize">SS address
+        <div class="input-group input-group-outline">
+          <label class="form-label">Type here...</label>
+          <input type="text" id='ss-address' class="form-control">
+        </div>
+        <div class="pt-1">
+          <p class="text-sm mb-0" id="selected-ss">Address "{{ss}}" selected</p>
+        </div>
+
+        <li class="list-group-item border-0 px-0">
+          <div class="form-check form-switch ps-0">
+            <input class="form-check-input ms-auto" type="checkbox" id="SS_type_check" checked="">
+            <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="SS_type_check">Check if MSO/DPO/DSA</label>
+          </div>
+        </li>
+
+        <div><button onclick="setAddress()"
+                     class="btn btn-sm mb-0 me-1 bg-gradient-secondary mt-4 w-100">Connect</button></div>
+      </div>
+      <hr class="dark horizontal my-0">
+      <div class="card-footer p-3">
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+    <div class="card">
+      <div class="card-header p-3 pt-2">
+        <div
+                class="icon icon-lg icon-shape bg-gradient-warning shadow-success text-center border-radius-xl mt-n4 position-absolute">
+          <i class="material-icons opacity-10">build</i>
+        </div>
+        <br /><br />
+        <div class="input-group input-group-outline" style="width:48%; float:left; ">
+          <label class="form-label">FS CH1 ATTN</label>
+          <input type="text" id='FS_CH1_ATTN' class="form-control">
+        </div>
+        <div class="input-group input-group-outline" style="width:48%; float:right;">
+          <label class="form-label">FS CH2 ATTN</label>
+          <input type="text" id='FS_CH2_ATTN' class="form-control">
+        </div>
+        <div class="input-group input-group-outline" style="width:48%; float:left; ">
+          <label class="form-label">FS CH3 ATTN</label>
+          <input type="text" id='FS_CH3_ATTN' class="form-control">
+        </div>
+        <div class="input-group input-group-outline" style="width:48%; float:right; ">
+          <label class="form-label">FS CH4 ATTN</label>
+          <input type="text" id='FS_CH4_ATTN' class="form-control">
+        </div>
+        <div class="input-group input-group-outline" style="width:48%; float:left;">
+          <label class="form-label">SS CH1 ATTN</label>
+          <input type="text" id='SS_CH1_ATTN' class="form-control">
+        </div>
+        <div class="input-group input-group-outline" style="width:48%; float:right;">
+          <label class="form-label">SS CH2 ATTN</label>
+          <input type="text" id='SS_CH2_ATTN' class="form-control">
+        </div>
+        <div class="input-group input-group-outline" style="width:48%; float:left;">
+          <label class="form-label">SS CH3 ATTN</label>
+          <input type="text" id='SS_CH3_ATTN' class="form-control">
+        </div>
+        <div class="input-group input-group-outline" style="width:48%; float:right;">
+          <label class="form-label">SS CH4 ATTN</label>
+          <input type="text" id='SS_CH4_ATTN' class="form-control">
+        </div>
+        <p class="text-end text-sm mb-0 text-capitalize">comments
+        <div class="input-group input-group-outline" style="width:100%;">
+          <label class="form-label">Comments</label>
+          <input type="text" id='comments' class="form-control">
+        </div>
+        <div><button onclick="getAttn()" class="btn btn-sm mb-0 me-1 bg-gradient-secondary mt-4 w-100">Save to
+          database</button></div>
+      </div>
+      <hr class="dark horizontal my-0">
+      <div class="card-footer p-3">
+        <p class="mb-0 text-sm" id="fs-attn">Saved FS ATTN: {{fs_ch1_attn}}, {{fs_ch2_attn}}, {{fs_ch3_attn}}, {{fs_ch4_attn}}</p>
+        <p class="mb-0 text-sm" id="ss-attn">Saved SS ATTN: {{ss_ch1_attn}}, {{ss_ch2_attn}}, {{ss_ch3_attn}}, {{ss_ch4_attn}}</p>
+        <p class="mb-0 text-sm" id="add-comments">Saved comments: {{comments}}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+    <div class="card">
+      <div class="card-header p-3 pt-2">
+        <div
+                class="icon icon-lg icon-shape bg-gradient-danger shadow-success text-center border-radius-xl mt-n4 position-absolute">
+          <i class="material-icons opacity-10">touch_app</i>
+        </div>
+        <br />
+        <p class="text-end text-sm mb-0 text-capitalize">Number of shots
+        <div class="input-group input-group-outline">
+          <label class="form-label">Type here...</label>
+          <input type="number" id='run-times' class="form-control">
+        </div>
+        <div><button onclick="runTask()" class="btn btn-sm mb-0 me-1 bg-gradient-secondary mt-4 w-100">Start</button>
+        </div>
+      </div>
+      <hr class="dark horizontal my-0">
+      <div class="card-footer p-3">
+      </div>
+    </div>
+  </div>
+
+  <hr class="dark horizontal">
+  <div class="row mt-4">
+    <div class="col-lg-4 col-md-6 mt-4 mb-4">
+      <div class="card z-index-2 ">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+            <div class="chart">
+              <div id="FS-ch1" class="chart-canvas" style="width:100%;height:200px;"></div>
+            </div>
+          </div>
+        </div>
+        <br />
+        <div style="text-align: center;">
+          <button style="border: none;" onclick="fsBack(1)">
+            <i class="material-icons text-dark">keyboard_arrow_left</i>
+          </button>
+          <span id="FS-ch1-current"></span>
+          <span>/</span>
+          <span id="FS-ch1-total"></span>
+          <button style="border: none; " onclick="fsNext(1)">
+            <i class="material-icons text-dark">keyboard_arrow_right</i>
+          </button>
+        </div>
+
+        <div class="card-body">
+          <h6 class="mb-0 ">FS - Channel 1</h6>
+          <p class="text-sm mb-0">peak voltage=<span id="voltage-1"></span> V</p>
+          <p class="text-xs text-secondary mb-0">* Peak voltage is calculated from (Vmax-Vmin)/2.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-6 mt-4 mb-4">
+      <div class="card z-index-2  ">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+            <div class="chart">
+              <div id="FS-ch2" class="chart-canvas" style="width: 100%; height:200px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center;">
+          <button style="border: none;" onclick="fsBack(2)">
+            <i class="material-icons text-dark">keyboard_arrow_left</i>
+          </button>
+          <span id="FS-ch2-current"></span>
+          <span>/</span>
+          <span id="FS-ch2-total"></span>
+          <button style="border: none;" onclick="fsNext(2)">
+            <i class="material-icons text-dark">keyboard_arrow_right</i>
+          </button>
+        </div>
+
+        <div class="card-body">
+          <h6 class="mb-0 ">FS - Channel 2</h6>
+          <p class="text-sm ">peak voltage=<span id="voltage-2"></span> V</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-md-6 mt-4 mb-4">
+      <div class="card z-index-2 ">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+            <div class="chart">
+              <div id="FS-ch3" class="chart-canvas" style="width:100%;height:200px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center;">
+          <button style="border: none;" onclick="fsBack(3)">
+            <i class="material-icons text-dark">keyboard_arrow_left</i>
+          </button>
+          <span id="FS-ch3-current"></span>
+          <span>/</span>
+          <span id="FS-ch3-total"></span>
+          <button style="border: none;" onclick="fsNext(3)">
+            <i class="material-icons text-dark">keyboard_arrow_right</i>
+          </button>
+        </div>
+
+        <div class="card-body">
+          <h6 class="mb-0 ">FS - Channel 3</h6>
+          <p class="text-sm ">peak voltage=<span id="voltage-3"></span> V</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-md-6 mt-4 mb-4">
+      <div class="card z-index-2 ">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+            <div class="chart">
+              <div id="FS-ch4" class="chart-canvas" style="width:100%;height:200px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center;">
+          <button style="border: none;" onclick="fsBack(4)">
+            <i class="material-icons text-dark">keyboard_arrow_left</i>
+          </button>
+          <span id="FS-ch4-current"></span>
+          <span>/</span>
+          <span id="FS-ch4-total"></span>
+          <button style="border: none;" onclick="fsNext(4)">
+            <i class="material-icons text-dark">keyboard_arrow_right</i>
+          </button>
+        </div>
+
+        <div class="card-body">
+          <h6 class="mb-0 ">FS - Channel 4</h6>
+          <p class="text-sm ">peak voltage=<span id="voltage-4"></span> V</p>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+    <!-- SS -->
+    <div class="col-lg-4 col-md-6 mt-4 mb-4">
+      <div class="card z-index-2 ">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+            <div class="chart">
+              <div id="SS-ch1" class="chart-canvas" style="width:100%;height:200px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center;">
+          <button style="border: none;" onclick="ssBack(1)">
+            <i class="material-icons text-dark">keyboard_arrow_left</i>
+          </button>
+          <span id="SS-ch1-current"></span>
+          <span>/</span>
+          <span id="SS-ch1-total"></span>
+          <button style="border: none;" onclick="ssNext(1)">
+            <i class="material-icons text-dark">keyboard_arrow_right</i>
+          </button>
+        </div>
+
+        <div class="card-body">
+          <h6 class="mb-0 ">SS - Channel 1</h6>
+          <p class="text-sm ">peak voltage=<span id="ss-voltage-1"></span> V</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-md-6 mt-4 mb-4">
+      <div class="card z-index-2 ">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+            <div class="chart">
+              <div id="SS-ch2" class="chart-canvas" style="width:100%;height:200px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center;">
+          <button style="border: none;" onclick="ssBack(2)">
+            <i class="material-icons text-dark">keyboard_arrow_left</i>
+          </button>
+          <span id="SS-ch2-current"></span>
+          <span>/</span>
+          <span id="SS-ch2-total"></span>
+          <button style="border: none;" onclick="ssNext(2)">
+            <i class="material-icons text-dark">keyboard_arrow_right</i>
+          </button>
+        </div>
+        <div class="card-body">
+          <h6 class="mb-0 ">SS - Channel 2</h6>
+          <p class="text-sm ">peak voltage=<span id="ss-voltage-2"></span> V</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 mt-4 mb-3">
+      <div class="card z-index-2 ">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+            <div class="chart">
+              <div id="SS-ch3" class="chart-canvas" style="width: 100%;height:200px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center;">
+          <button style="border: none;" onclick="ssBack(3)">
+            <i class="material-icons text-dark">keyboard_arrow_left</i>
+          </button>
+          <span id="SS-ch3-current"></span>
+          <span>/</span>
+          <span id="SS-ch3-total"></span>
+          <button style="border: none;" onclick="ssNext(3)">
+            <i class="material-icons text-dark">keyboard_arrow_right</i>
+          </button>
+        </div>
+        <div class="card-body">
+          <h6 class="mb-0 ">SS - Channel 3</h6>
+          <p class="text-sm ">peak voltage=<span id="ss-voltage-3"></span> V</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 mt-4 mb-3">
+      <div class="card z-index-2 ">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+            <div class="chart">
+              <div id="SS-ch4" class="chart-canvas" style="width: 100%;height:200px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center;">
+          <button style="border: none;" onclick="ssBack(4)">
+            <i class="material-icons text-dark">keyboard_arrow_left</i>
+          </button>
+          <span id="SS-ch4-current"></span>
+          <span>/</span>
+          <span id="SS-ch4-total"></span>
+          <button style="border: none;" onclick="ssNext(4)">
+            <i class="material-icons text-dark">keyboard_arrow_right</i>
+          </button>
+        </div>
+        <div class="card-body">
+          <h6 class="mb-0 ">SS - Channel 4</h6>
+          <p class="text-sm ">peak voltage=<span id="ss-voltage-4"></span> V</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      {% include 'includes/footer.html' %}
+  <footer class="footer pt-5">
+    <div class="container-fluid">
+      <div class="row align-items-center justify-content-lg-between">
+        <div class="col-lg-6 mb-lg-0 mb-4">
+          <div class="copyright text-center text-sm text-muted text-lg-start">
+            © <a class="font-weight-bold" target="_blank">G. Chen</a> at AWA
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <br />
+
+
+    {% endblock content %}
+
+    <!-- Specific Page JS goes HERE  -->
+    {% block javascripts %}
+    {% load static %}
+    <script src="{% static 'assets/js/jquery.js' %}"></script>
+
+    <script>
+      window.db = {};
+
+      async function setAddress() {
+        let fs = $('#fs-address').val();
+        let ss = $('#ss-address').val();
+
+        if (!(fs || ss)) {
+          return;
+        }
+
+        let resp = await $.post('api/set-address', { fs, ss });
+        if (resp.code === 0) {
+
+          let fsShow = $('#selected-fs');
+          let ssShow = $('#selected-ss');
+
+          fsShow.text(`Address ${fs} selected.`)
+          ssShow.text(`Address ${ss} selected.`)
+
+          alert('Scope port address saved!');
+
+        }
+      }
+      //
+      async function getAttn() {
+        let FS_CH1_ATTN = $('#FS_CH1_ATTN').val();
+        let FS_CH2_ATTN = $('#FS_CH2_ATTN').val();
+        let FS_CH3_ATTN = $('#FS_CH3_ATTN').val();
+        let FS_CH4_ATTN = $('#FS_CH4_ATTN').val();
+        let SS_CH1_ATTN = $('#SS_CH1_ATTN').val();
+        let SS_CH2_ATTN = $('#SS_CH2_ATTN').val();
+        let SS_CH3_ATTN = $('#SS_CH3_ATTN').val();
+        let SS_CH4_ATTN = $('#SS_CH4_ATTN').val();
+        let comments = $('#comments').val();
+
+        let resp = await $.post('api/get-attn', {
+          FS_CH1_ATTN, FS_CH2_ATTN, FS_CH3_ATTN, FS_CH4_ATTN,
+          SS_CH1_ATTN, SS_CH2_ATTN, SS_CH3_ATTN, SS_CH4_ATTN,
+          comments,
+        });
+
+        if (resp.code === 0) {
+
+          // let fsShow = $('#selected-fs');
+          // let ssShow = $('#selected-ss');
+          //
+          // fsShow.text(`Address ${fs} selected.`)
+          // ssShow.text(`Address ${ss} selected.`)
+
+          let fsAttn = $('#fs-attn');
+          let ssAttn = $('#ss-attn');
+          let addComments = $('#add-comments');
+          fsAttn.text(`Saved FS ATTN: ${FS_CH1_ATTN}, ${FS_CH2_ATTN}, ${FS_CH3_ATTN}, ${FS_CH4_ATTN}`);
+          ssAttn.text(`Saved SS ATTN: ${SS_CH1_ATTN}, ${SS_CH2_ATTN}, ${SS_CH3_ATTN}, ${SS_CH4_ATTN}`);
+          addComments.text(`Saved comments: ${comments}`);
+
+          alert('Adds-on ATTN info saved!');
+        }
+      }
+
+      async function runTask() {
+
+        let fsShow = $('#selected-fs').text();
+        let ssShow = $('#selected-ss').text();
+
+        if (fsShow === 'Address  selected.' || ssShow === 'Address  selected.') {
+          alert('Please type in scope port address!');
+          return;
+        }
+
+        let times = $('#run-times').val();
+        if (times < 1) {
+          alert('Number of shots >= 1');
+          return;
+        }
+        let resp = await $.post('api/run-task', {
+          times
+        });
+
+        if (resp.code === 0) {
+          alert('Data taking finished!');
+          getLastTask();
+        } else {
+          alert('Error occured during data taking!');
+        }
+      }
+
+      function initCurrent() {
+        window.db.fsChannel1Current = 0;
+        window.db.fsChannel2Current = 0;
+        window.db.fsChannel3Current = 0;
+        window.db.fsChannel4Current = 0;
+
+        window.db.ssChannel1Current = 0;
+        window.db.ssChannel2Current = 0;
+        window.db.ssChannel3Current = 0;
+        window.db.ssChannel4Current = 0;
+      }
+
+      function initFsSpanCurrentTotal() {
+        for (let i = 1; i <= 4; i++) {
+          let current = $(`#FS-ch${i}-current`);
+          let total = $(`#FS-ch${i}-total`);
+          current.text(1);
+          total.text(window.db.fs.length);
+        }
+      }
+
+      function initSsSpanCurrentTotal() {
+        for (let i = 1; i <= 2; i++) {
+          let current = $(`#SS-ch${i}-current`);
+          let total = $(`#SS-ch${i}-total`);
+          current.text(1);
+          total.text(window.db.ss.length);
+        }
+      }
+
+      function initFsCanvas() {
+        for (let i = 1; i <= 4; i++) {
+          let canvasId = `FS-ch${i}`;
+          let data = window.db.fs[0][`Ch${i}`];
+
+          let voltage = $(`#voltage-${i}`);
+          voltage.text((Math.max(...data)-Math.min(...data))/2);
+          draw(canvasId, data);
+        }
+      }
+
+      function initSsCanvas() {
+        if (window.db.ss.length == 0) {
+          return;
+        }
+        
+        for (let i = 1; i <= 4; i++) {
+          let canvasId = `SS-ch${i}`;
+          let data = window.db.ss[0][`Ch${i}`];
+          let voltage = $(`#ss-voltage-${i}`);
+          voltage.text((Math.max(...data)-Math.min(...data))/2);
+          draw(canvasId, data);
+        }
+      }
+
+      function fsNext(channelNumber) {
+        let canvasId = `FS-ch${channelNumber}`;
+        let dbCurrentKey = `fsChannel${channelNumber}Current`;
+        if (window.db[dbCurrentKey] < window.db.fs.length - 1) {
+          window.db[dbCurrentKey] = window.db[dbCurrentKey] + 1;
+          let data = window.db.fs[window.db[dbCurrentKey]][`Ch${channelNumber}`];
+          let current = $(`#FS-ch${channelNumber}-current`);
+          current.text(window.db[dbCurrentKey] + 1);
+
+          let voltage = $(`#voltage-${channelNumber}`);
+          voltage.text((Math.max(...data)-Math.min(...data))/2);
+
+          draw(canvasId, data);
+        }
+      }
+
+      function ssNext(channelNumber) {
+        let canvasId = `SS-ch${channelNumber}`;
+        let dbCurrentKey = `ssChannel${channelNumber}Current`;
+
+        if (window.db[dbCurrentKey] < window.db.ss.length - 1) {
+          window.db[dbCurrentKey] = window.db[dbCurrentKey] + 1;
+          let data = window.db.ss[window.db[dbCurrentKey]][`Ch${channelNumber}`];
+          let current = $(`#SS-ch${channelNumber}-current`);
+          current.text(window.db[dbCurrentKey] + 1);
+
+          let voltage = $(`#ss-voltage-${channelNumber}`);
+          voltage.text((Math.max(...data)-Math.min(...data))/2);
+
+          draw(canvasId, data);
+        }
+      }
+
+      function fsBack(channelNumber) {
+        let canvasId = `FS-ch${channelNumber}`;
+        let dbCurrentKey = `fsChannel${channelNumber}Current`;
+        if (window.db[dbCurrentKey] > 0) {
+          window.db[dbCurrentKey] = window.db[dbCurrentKey] - 1;
+          let data = window.db.fs[window.db[dbCurrentKey]][`Ch${channelNumber}`];
+          let current = $(`#FS-ch${channelNumber}-current`);
+          current.text(window.db[dbCurrentKey] + 1);
+
+          let voltage = $(`#voltage-${channelNumber}`);
+          voltage.text((Math.max(...data)-Math.min(...data))/2);
+
+          draw(canvasId, data);
+        }
+      }
+
+      function ssBack(channelNumber) {
+        let canvasId = `SS-ch${channelNumber}`;
+        let dbCurrentKey = `ssChannel${channelNumber}Current`;
+        if (window.db[dbCurrentKey] > 0) {
+          window.db[dbCurrentKey] = window.db[dbCurrentKey] - 1;
+          let data = window.db.ss[window.db[dbCurrentKey]][`Ch${channelNumber}`];
+          let current = $(`#SS-ch${channelNumber}-current`);
+          current.text(window.db[dbCurrentKey] + 1);
+
+          let voltage = $(`#ss-voltage-${channelNumber}`);
+          voltage.text((Math.max(...data)-Math.min(...data))/2);
+
+          draw(canvasId, data);
+        }
+      }
+
+      async function getLastTask() {
+        let resp = await $.get('api/get-last-task');
+        if (resp.code === 0) {
+          window.db.fs = resp.data.fs;
+          window.db.ss = resp.data.ss;
+
+          initCurrent();
+          initFsSpanCurrentTotal();
+          initSsSpanCurrentTotal();
+          initFsCanvas();
+          initSsCanvas();
+        }
+        else {
+          alert('Error occurred when pull measured data.');
+        }
+      }
+    </script>
+
+    {% load static %}
+    <script src="{% static 'assets/js/echarts.min.js' %}"></script>
+
+    <script>
+      function draw(elementId, data) {
+        let x = [];
+        let start = 0;
+        while (start < data.length) {
+          x.push(start);
+          start++;
+        }
+
+        // let data = window.db.fs[window.db.fsCurrent];
+        var color_set = ['#fb8c00', '#344767', '#e91e63', '#028090']
+        const i = elementId.split("ch")[1];
+        let chartDom = document.getElementById(elementId);
+        var myChart = echarts.init(chartDom);
+        var option = {
+          color: [color_set[i-1]],
+          xAxis: {
+            show: false,
+            type: 'category',
+            data: x
+          },
+          yAxis: {
+            type: 'value',
+            name: 'Raw Signal',
+          },
+          series: [
+            {
+              data: data,
+              type: 'line'
+            }
+          ]
+        };
+
+        option && myChart.setOption(option);
+      }
+
+    </script>
+
+    <script src="{{ ASSETS_ROOT }}/js/plugins/chartjs.min.js"></script>
+
+    </script>
+
+
+    {% endblock javascripts %}

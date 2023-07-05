@@ -1,0 +1,8 @@
+{
+    "P_for": "Ch1",
+    "P_ref": "Ch2",
+    "Task_ids": [
+        1
+    ],
+    "Task_id_to_convolve": "23"
+}

@@ -1,0 +1,503 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Postprocess {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+<script>
+    PI = 3.141592659;
+    c = 299792458;
+    Ls = 0.3;
+    beta = 0.22;
+    f_0 = 1.17e10;
+    f_awa = 1.3e9;
+    r_over_q = 3920;
+    N = 8;
+    Tb = 1/f_awa;
+    Q_factor = 6500;
+
+    function ana(f){
+        charge = eval(f.charge.value)/1e9;
+        sigma_z = eval(f.sigma_z.value)/1000;
+
+        omega = 2*PI*f_0;
+        pulse_len = Ls*(1-beta)/(beta*c);
+        k = omega/c;
+        attn_factor = omega/(2*Q_factor*beta*c);
+        form_factor = Math.exp(-1*(k*sigma_z)*(k*sigma_z)/2);
+        // f.form_factor.value = form_factor.toPrecision(4);
+
+        power = omega / (4 * c) * r_over_q * Ls**2 * (charge/N/Tb)**2 / beta * form_factor**2 * (
+            (1 - Math.exp(-1 * attn_factor * Ls)) / (attn_factor * Ls))**2/1000000;
+        f.power.value = power.toPrecision(5);
+
+        Xgun_gradient = Math.sqrt(power)*520/Math.sqrt(300);
+        f.Xgun_gradient.value = Xgun_gradient.toPrecision(4);
+    }
+
+
+</script>
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-4 mt-4">
+            <div class="card">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-gradient-dark shadow-primary border-radius-lg pt-4 pb-3">
+                        <h6 class="text-white text-capitalize ps-3">Power Calculator (metalic PETS)</h6>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-4">
+                        <div class="card card-plain h-100">
+                            <div class="card-header pb-0 p-3">
+                                <div class="row">
+                                    <div class="card-body p-3">
+                                        <hr class="horizontal gray-light my-0">
+                                        <ul class="list-group">
+                                            <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">f_0:</strong>
+                                                &nbsp; 11.7 GHz
+                                            </li>
+                                            <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Tb:</strong>
+                                                &nbsp; 0.769 ns
+                                            </li>
+                                            <hr>
+                                            <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">r/Q:</strong>
+                                                &nbsp; 3920 Ω/m
+                                            </li>
+                                            <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Ls:</strong>
+                                                &nbsp; 0.3 mm
+                                            </li>
+                                            <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Q:</strong>
+                                                &nbsp; 6500
+                                            </li>
+                                            <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">β_group:</strong>
+                                                &nbsp; 0.22
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-7">
+                        <div class="card card-plain h-100">
+                            <div class="card-header pb-0 p-3">
+                                <div class="row">
+                                    <div class="card-body p-3">
+                                        <form method="POST">
+                                            <hr class="horizontal gray-light my-0">
+                                            <ul class="list-group">
+                                                <div class="input-group input-group-outline my-1"
+                                                     style="width:100%; float:right; ">
+                                                    <label class="form-label">Bunch length [mm]</label>
+                                                    <input type="text" name="sigma_z" class="form-control"
+                                                           onfocus="focused(this)" onfocusout="defocused(this)">
+                                                </div>
+                                                <div class="input-group input-group-outline my-1"
+                                                     style="width:100%; float:right; ">
+                                                    <label class="form-label">Total charge [nC]</label>
+                                                    <input type="text" name="charge" class="form-control"
+                                                           onfocus="focused(this)" onfocusout="defocused(this)">
+                                                </div>
+                                                <button type="button" class="btn btn-outline-primary btn-sm mb-0"
+                                                        value="calculate" onclick="ana(this.form)">calculate
+                                                </button>
+                                                <hr>
+                                                <li class="list-group-item border-0 ps-0 text-med">
+                                                    <strong class="text-dark text-sm">Power [MW]:</strong>
+                                                    <input type="text" size="15" name="power" onfocus="focused(this)"
+                                                           onfocusout="defocused(this)">
+                                                </li>
+                                                <li class="list-group-item border-0 ps-0 text-med">
+                                                    <strong class="text-dark text-sm">Approx. Xgun E [MV/m]:</strong>
+                                                    <input type="text" size="7" name="Xgun_gradient"
+                                                           onfocus="focused(this)"
+                                                           onfocusout="defocused(this)">
+                                                </li>
+                                            </ul>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+<br>
+<div class="row">
+    <div class=col-lg-8 mt-4 mb-3>
+        <div class="card z-index-2 ">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+                    <div class="chart">
+                        <div id="PrPf" class="chart-canvas" style="width: 100%;height:800px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <h6 class="mb-0 ">Pr vs. Pf</h6>
+            </div>
+        </div>
+    </div>
+    <div class=col-lg-3 mt-4 mb-3>
+        <div class="card">
+            <div class="card-header p-3 pt-2">
+                <div class="icon icon-lg icon-shape bg-gradient-warning shadow-success text-center border-radius-xl mt-n4 position-absolute">
+                    <i class="material-icons opacity-10">build</i>
+                </div>
+                <br>
+            </div>
+            <div class="card card-plain h-100">
+                <div class="card-header pb-0 p-3">
+                    <div class="row">
+                        <div class="card-body p-3 ">
+                            <ul class="list-group">
+                                <li class="list-group-item border-0 ps-0 text-med">
+                                    <strong class="text-dark">P_for (FS): &nbsp; </strong>
+                                    <input type="checkbox" id="Pf-Ch1" name="Pf" value="Ch1">
+                                    <label class="border-0 ps-0 text-med" for="Pf-Ch1">Ch1 &nbsp; &nbsp; </label>
+                                    <input type="checkbox" id="Pf-Ch2" name="Pf" value="Ch2">
+                                    <label class="border-0 ps-0 text-med" for="Pf-Ch2">Ch2 &nbsp; &nbsp; </label>
+                                    <input type="checkbox" id="Pf-Ch3" name="Pf" value="Ch3">
+                                    <label class="border-0 ps-0 text-med" for="Pf-Ch3">Ch3 &nbsp; &nbsp; </label>
+                                    <input type="checkbox" id="Pf-Ch4" name="Pf" value="Ch4">
+                                    <label class="border-0 ps-0 text-med" for="Pf-Ch4">Ch4 &nbsp; &nbsp; </label>
+                                </li>
+                                <li class="list-group-item border-0 ps-0 text-med">
+                                    <strong class="text-dark">P_ref (FS): &nbsp; </strong>
+                                    <input type="checkbox" name="Pr" value="Ch1" id="Pr-Ch1">
+                                    <label class="border-0 ps-0 text-med" for="Pr-Ch1">Ch1 &nbsp; &nbsp; </label>
+                                    <input type="checkbox" name="Pr" value="Ch2" id="Pr-Ch2">
+                                    <label class="border-0 ps-0 text-med" for="Pr-Ch2">Ch2 &nbsp; &nbsp; </label>
+                                    <input type="checkbox" name="Pr" value="Ch3" id="Pr-Ch3">
+                                    <label class="border-0 ps-0 text-med" for="Pr-Ch3">Ch3 &nbsp; &nbsp; </label>
+                                    <input type="checkbox" name="Pr" value="Ch4" id="Pr-Ch4">
+                                    <label class="border-0 ps-0 text-med" for="Pr-Ch4">Ch4 &nbsp; &nbsp; </label>
+                                    <br>
+                                </li>
+                                <li class="list-group-item border-0 ps-0 text-med">
+                                    <strong class="text-dark">Task IDs: &nbsp; </strong>
+                                    <input type="text" id="tasks" onfocus="focused(this)" onfocusout="defocused(this)">
+                                </li>
+                                <li class="list-group-item border-0 ps-0 text-med">
+                                    Slope Upper bound: &nbsp
+                                    <input type="text" style="border:none;outline:none" size="10" id='slope_upper_bound'>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer p-1">
+            </div>
+        </div>
+        <div class="mx-3">
+            <button onclick="getDatatoProcess()" class="btn btn-sm mb-0 me-1 bg-gradient-secondary mt-4 w-100">Process
+                data
+            </button>
+        </div>
+        <br>
+        <strong class="text-dark text-med">Comments: &nbsp; </strong>
+        <p id="sudo" class="text-dark text-med"></p>
+        <hr>
+
+        <div class="card z-index-2 ">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                <br>
+                <li class="list-group-item border-0 ps-0 pt-3 text-med">
+                    <strong class="text-dark">Convolution Task ID: &nbsp; </strong>
+                    <input type="text" size="10" id="task_to_convolve" onfocus="focused(this)"
+                           onfocusout="defocused(this)">
+                </li>
+                <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+                    <div class="chart">
+                        <div id="convolutionChart" class="chart-canvas" style="width: 100%;height:200px;"></div>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <button style="border: none;" onclick="convolutionBack()">
+                            <i class="material-icons text-dark">keyboard_arrow_left</i>
+                        </button>
+                        <span id="conolution-current"></span>
+                        <span>/</span>
+                        <span id="conolution-total"></span>
+                        <button style="border: none" onclick="convolutionNext()">
+                            <i class="material-icons text-dark">keyboard_arrow_right</i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <h6 class="mb-0 ">Colvolution</h6>
+<!--                <p class="text-sm ">Ratio=<span id="convolution"></span></p>-->
+            </div>
+        </div>
+        <div class="mx-3">
+            <button onclick="calConvolution()" class="btn btn-sm mb-0 me-1 bg-gradient-secondary mt-4 w-100">Perform
+                Concolution
+            </button>
+        </div>
+    </div>
+</div>
+<hr>
+<br>
+
+<footer class="footer pt-5">
+    <div class="container-fluid">
+        <div class="row align-items-center justify-content-lg-between">
+            <div class="col-lg-6 mb-lg-0 mb-4">
+                <div class="copyright text-center text-sm text-muted text-lg-start">
+                    © <a class="font-weight-bold" target="_blank">G. Chen</a> at AWA
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+<br>
+</div>
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+{% load static %}
+<script src="{% static 'assets/js/jquery.js' %}"></script>
+<script src="{% static 'assets/js/echarts.min.js' %}"></script>
+
+
+<script>
+
+async function getDatatoProcess() {
+    let Pf_checkboxes = document.getElementsByName('Pf');
+    let Pf_checked_num = 0;
+    var Pf_ch = [];
+    for (var checkbox of Pf_checkboxes) {
+        if (checkbox.checked) {
+            Pf_checked_num+=1;
+            Pf_ch.push(checkbox.value);
+        }
+    }
+    if (Pf_checked_num > 1) {
+        alert("P_for checkbox ERROR: only one channel allowed!");
+        return;
+    }
+
+    let Pr_checkboxes = document.getElementsByName('Pr');
+    let Pr_checked_num = 0;
+    var Pr_ch = [];
+    for (var checkbox of Pr_checkboxes) {
+        if (checkbox.checked) {
+            Pr_checked_num += 1;
+            Pr_ch.push(checkbox.value);
+        }
+    }
+    if (Pr_checked_num > 1) {
+        alert("P_ref checkbox ERROR: only one channel allowed for P_ref!");
+        return;
+    }
+    document.getElementById("sudo").innerHTML = "The channel" + " was changed to " + Pf_ch + " vs. " + Pr_ch;
+
+    let taskIds = document.getElementById('tasks').value;
+    taskIds = taskIds.split(/\s*[,，]\s*/);
+
+    let pf_ch = Pf_ch[0], pr_ch = Pr_ch[0];
+
+    let resp = await $.post('api/get-data-to-process', {pf_ch, pr_ch, taskIds});
+
+    console.log(resp.data);
+    drawPrPf(resp.data);
+}
+
+
+async function calConvolution() {
+    let concolutionTaskId = document.getElementById('task_to_convolve').value;
+    let resp = await $.post('api/get-data-to-convolve', {concolutionTaskId});
+
+    console.log(resp.data);
+    drawConvolution(resp);
+}
+
+
+function drawPrPf(data) {
+    let formatData = [];
+    let pointsData = data.data;
+    let legend = [];
+
+    // let max = Math.max.apply(Math, pointsData.map(v => v[0]));
+    console.log(pointsData);
+
+    let slopeUpperBound = document.getElementById('slope_upper_bound').value;
+
+    const slopeLine = {
+        animation: false,
+        lineStyle: {type: 'solid'},
+        tooltip: {
+            formatter: 'slope line'
+        },
+        data: [[
+                {coord: [0, 0], symbol: 'none'},
+                {coord: [slopeUpperBound, slopeUpperBound*0.85], symbol: 'none'}
+        ]]
+    };
+
+    for (let item in pointsData) {
+        let legendName = 'task_id: ' + item + ' (' + data.comments[item] + ')';
+        formatData.push({
+            name: legendName,
+            type: 'scatter',
+            data: pointsData[item],
+            markLine: slopeLine
+        });
+        legend.push(legendName);
+    }
+
+    let chartDom = document.getElementById('PrPf');
+    var myChart = echarts.init(chartDom);
+    myChart.clear();
+    option = {
+        legend: {data: legend, formatter: function (label) { return label; }},
+        xAxis: {name: data.x + '-for (MW)'},
+        yAxis: {name: data.y + '-ref (MW)'},
+        textStyle: {fontSize: '14'},
+
+        grid: {
+            left: '5%',
+            right: '10%',
+            bottom: '3%',
+            top: '15%',
+            containLabel: true
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: function(params) {
+                let str = `${params.marker}${params.seriesName}<br>(${params.value[0]}, ${params.value[1]})`;
+                return str;
+            }
+        },
+      series: formatData
+
+};
+    myChart.setOption(option);
+}
+
+function drawConvolution(data) {
+    window.postprocess = {};
+
+    let pointsData = data.data;
+    // let legend = [];
+    // let formatData = [];
+
+    let ref_predict_data = pointsData.V_ref_predict_data;
+    let ref_data = pointsData.V_ref_data;
+
+    // predict_data
+    let ref_predict_data_x = ref_predict_data[0];  // x axis
+    let ref_predict_data_y = ref_predict_data[1];  // y axis
+
+    let ref_predict_points = zipArray(ref_predict_data_x, ref_predict_data_y);
+    window.postprocess.predict_data_points = ref_predict_points;
+
+    // ref_data
+    window.postprocess.ref_data = ref_data;
+    window.postprocess.current_index = 0;
+    window.postprocess.max_index = ref_data.length - 1;
+
+    let total = $(`#conolution-total`);
+    total.text(window.postprocess.max_index + 1 );
+    let current = $(`#conolution-current`);
+    current.text(window.postprocess.current_index + 1);
+
+    let refDataPoints = getCurrentRefData();
+
+    drawConvolutionChart(ref_predict_points, refDataPoints);
+}
+
+
+function zipArray(a, b) {
+    return a.map(function(e, i) { return [e, b[i]] });
+}
+
+
+function drawConvolutionChart(predict_points, ref_data_points) {
+    let chartDom = document.getElementById('convolutionChart');
+    var myChart = echarts.init(chartDom);
+    myChart.clear();
+
+    option = {
+        xAxis: {type: 'value',
+            min: 120,
+            max:170,
+            name: 'Time (ns)',
+            nameLocation: 'middle'
+            // nameGap: ? 10:10
+        },
+        yAxis: {type: 'value'},
+        textStyle: {fontSize: '14'},
+        legend: {orient: 'horizontal'},
+        series: [
+        {type: 'line', data: predict_points, name: 'predicted ref', symbol: 'none', areaStyle: {opacity: 0.7}},
+        {type: 'line', data: ref_data_points, name: 'measured ref', symbol: 'none', areaStyle: {opacity: 0.7}}
+
+        ],
+        grid: {
+            left: '5%',
+            right: '5%',
+            bottom: '3%',
+            top: '15%',
+            containLabel: true
+        },
+
+    };
+    myChart.setOption(option);
+}
+
+function getCurrentRefData() {
+    let data = window.postprocess.ref_data[window.postprocess.current_index];
+
+   let ref_x = data[0];  // x axis
+   let ref_y = data[1];  // y axis
+   return zipArray(ref_x, ref_y);
+}
+
+function convolutionBack() {
+   if (window.postprocess && window.postprocess.current_index <= 0) {
+        return;
+   }
+   window.postprocess.current_index -= 1;
+
+   let total = $(`#conolution-total`);
+   total.text(window.postprocess.max_index +1 );
+   let current = $(`#conolution-current`);
+   current.text(window.postprocess.current_index + 1);
+
+   let refDataPoints = getCurrentRefData();
+   drawConvolutionChart(window.postprocess.predict_data_points, refDataPoints);
+}
+
+function convolutionNext() {
+    if (window.postprocess && window.postprocess.current_index >= window.postprocess.max_index) {
+        return;
+    }
+
+    window.postprocess.current_index += 1;
+
+    let total = $(`#conolution-total`);
+    total.text(window.postprocess.max_index +1 );
+    let current = $(`#conolution-current`);
+    current.text(window.postprocess.current_index + 1);
+
+    drawConvolutionChart(window.postprocess.predict_data_points, getCurrentRefData());
+}
+
+
+</script>
+{% endblock javascripts %}
