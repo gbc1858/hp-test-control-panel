@@ -16,7 +16,7 @@ def Tektronix(port_address):
         rm = visa.ResourceManager()
         scope = rm.open_resource(port_address)
 #         print(scope.query("*IDN?"))
-        scope.timeout = 100000              # scope timeout [ms]
+        scope.timeout = 20000              # scope timeout [ms]
         return scope
 
     except visa.errors.VisaIOError:
@@ -149,9 +149,21 @@ def preset_scope(fs_address, ss_address, fs_preambles, ss_preambles, fs_ch_ls, s
 
 
 def pull_wfm_all_ch(fs_address, ss_address, fs_channel_ls, ss_channel_ls, fs_hori_len, ss_hori_len):
-    fs_address.write('CURVEnext?')
+    try:
+        fs_address.write('CURVEnext?')
+    except:
+        print('Pulling data from FS error!')
     time.sleep(1e-3)
-    ss_address.write('CURVE?')
+    try:
+        # ss_address.write('CURVE?')
+        ss_address.write('CURVEnext?')
+    except:
+        print('Pulling data from SS error!')
+        
+    # fs_address.write('CURVEnext?')
+    # time.sleep(1e-3)
+    # ss_address.write('CURVEnext?')
+
     fs_bin = fs_address.read_raw()
     ss_bin = ss_address.read_raw()
 

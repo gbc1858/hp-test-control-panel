@@ -4240,7 +4240,7 @@ textarea.form-control-lg {
 .list-group-item {
   position: relative;
   display: block;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0rem;
   color: inherit;
   background-color: #fff;
   border: 1px solid rgba(0, 0, 0, 0.125); }

@@ -7,7 +7,7 @@
     "SS_CH2_ATTN": "202",
     "SS_CH3_ATTN": "0",
     "SS_CH4_ATTN": "204",
-    "fs": "TCPIP0::192.168.0.44::inst0::INSTR",
+    "fs": "TCPIP0::192.168.0.43::inst0::INSTR",
     "ss": "TCPIP0::192.168.0.78::inst0::INSTR",
-    "comments": "250 nC_4"
+    "comments": "test data"
 }
