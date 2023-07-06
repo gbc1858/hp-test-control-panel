@@ -155,14 +155,14 @@ def pull_wfm_all_ch(fs_address, ss_address, fs_channel_ls, ss_channel_ls, fs_hor
         print('Pulling data from FS error!')
     time.sleep(1e-3)
     try:
-        # ss_address.write('CURVE?')
-        ss_address.write('CURVEnext?')
+        ss_address.write('CURVE?')
+        # ss_address.write('CURVEnext?')
     except:
         print('Pulling data from SS error!')
         
     # fs_address.write('CURVEnext?')
     # time.sleep(1e-3)
-    # ss_address.write('CURVEnext?')
+    # ss_address.write('CURVE?')
 
     fs_bin = fs_address.read_raw()
     ss_bin = ss_address.read_raw()
