@@ -1,6 +1,6 @@
 # Control panel for high power rf test
 
-This project is a locally deployed application built using the Django framework. It is designed to conduct high-power rf data tests at AWA and can be used for controlling up to two Tektronix scopes. The application is capable of performing basic rf data processing tasks, including preliminary power calculations, signal convolution etc.
+This project is a locally deployed application built using the Django framework. It is designed to conduct high-power rf tests at AWA and can be used for controlling up to two Tektronix scopes. The application is capable of performing basic rf data processing tasks, including preliminary power calculations, signal convolution etc.
 
 ## Project structure
 ```
