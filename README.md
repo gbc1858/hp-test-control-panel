@@ -5,7 +5,7 @@ This project is a locally deployed application built using the Django framework.
 ## Project structure
 ```
 hp-test-control-panel/
-    manage.py   # Django project management utility
+    manage.py   <= Django project management utility
     apps/
         __init__.py
         config.py
@@ -16,15 +16,15 @@ hp-test-control-panel/
             admin.py
             apps.py
             data_processing.py  <= functions for rf data processing
-            hardware_settings.py  <= hardware info for online rf data processing (cable loss etc.)
-            models.py  <= model classes defining the structure of the database schema
-            scope_control.py  <= functions for scope control and data acquisition  
+            hardware_settings.py    <= hardware info for online rf data processing (cable loss etc.)
+            models.py   <= model classes defining the structure of the database schema
+            scope_control.py    <= functions for scope control and data acquisition  
             urls.py
-            views.py  <= functions for processing user requests (`take data` etc.)
+            views.py    <= functions for processing user requests (`take data` etc.)
             templates/
                 home/
-                    measurement.html  <= measurement panel
-                    postprocess.html  <= postprocess panel
+                    measurement.html    <= measurement panel
+                    postprocess.html    <= postprocess panel
                     notifications.html
                     template.html
 
@@ -36,7 +36,7 @@ hp-test-control-panel/
         settings.py
         urls.py
         wsgi.py
-    static/  # 
+    static/ 
         assets/
             css/
             js/
@@ -46,8 +46,8 @@ hp-test-control-panel/
 ```
 
 ## Panel screenshots
-<img src="readme_img/img1.png" alt="drawing" width="500"/>
-<img src="readme_img/img2.png" alt="drawing" width="500"/>
+<img src="readme_img/img1.png" alt="drawing"/>
+<img src="readme_img/img2.png" alt="drawing"/>
 
 ## Usage
 The project has been developed and tested on Mac OS, including systems with Intel and M1 chips. It's recommended to verify the compatibility of your LabVIEW version with Apple Silicon. 
