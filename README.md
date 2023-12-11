@@ -81,3 +81,5 @@ $ python manage.py makemigrations
 No changes detected
 $ python manage.py runserver
 ```
+## Acknowledgment
+This project employs a Django template provided by [AppSeed](https://appseed.us/).
