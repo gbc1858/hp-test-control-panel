@@ -2,15 +2,7 @@
     "P_for": "Ch2",
     "P_ref": "Ch3",
     "Task_ids": [
-        40,
-        41,
-        42,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48
+        9
     ],
-    "Task_id_to_convolve": "47"
+    "Task_id_to_convolve": "9"
 }

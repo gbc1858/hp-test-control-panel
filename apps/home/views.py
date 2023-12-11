@@ -299,6 +299,11 @@ def get_last_task(request):
     fs_records = Record.objects.filter(task=last_task, type='fs')[::1]
     ss_records = Record.objects.filter(task=last_task, type='ss')[::1]
 
+    if len(fs_records) > 20:
+        print('Too many data recorded. Only display first 20 shots.')
+        fs_records = Record.objects.filter(task=last_task, type='fs')[0:20]
+        ss_records = Record.objects.filter(task=last_task, type='ss')[0:20]
+
     fs = [serializer_record(record) for record in fs_records]
     ss = [serializer_record(record) for record in ss_records]
     return JsonResponse({'code': 0, 'data': {

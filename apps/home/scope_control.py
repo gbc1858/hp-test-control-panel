@@ -21,6 +21,7 @@ def Tektronix(port_address):
 
     except visa.errors.VisaIOError:
         print(f'Scope ({port_address}) connection error!')
+        return 0
 
 
 def get_WFM_preamble(port_address, channel_list):
@@ -121,6 +122,7 @@ def get_WFM(port_address, channel_list, ch_param):
 
 
 def preset_scope(fs_address, ss_address, fs_preambles, ss_preambles, fs_ch_ls, ss_ch_ls):
+
     print(f'     Event      |       Time     ')
     print(f'--------------- | ---------------')
     print(f'scope start     | {datetime.now().time()}')
@@ -129,39 +131,56 @@ def preset_scope(fs_address, ss_address, fs_preambles, ss_preambles, fs_ch_ls, s
     fs_channel_ls_join = ','.join(fs_ch_ls)
     ss_channel_ls_join = ','.join(ss_ch_ls)
 
-    fs.write("DATA:SOURCE " + fs_channel_ls_join)
-    ss.write("DATA:SOURCE " + ss_channel_ls_join)
+    if fs != 0:
+        fs.write("DATA:SOURCE " + fs_channel_ls_join)
+    if ss != 0:
+        ss.write("DATA:SOURCE " + ss_channel_ls_join)
 
-    fs_hori_len = fs_preambles['CH1']['NR_Pt']
-    fs.write('DATA:WIDTH 1')
-    fs.write('DATA:ENCDG RIBin')
-    fs.write('DATA:START 1')         # Set start index of measurement buffer data
-    fs.write(f"DATA:STOP {fs_hori_len}")
+    if fs != 0:
+        fs_hori_len = fs_preambles['CH1']['NR_Pt']
+        fs.write('DATA:WIDTH 1')
+        fs.write('DATA:ENCDG RIBin')
+        fs.write('DATA:START 1')         # Set start index of measurement buffer data
+        fs.write(f"DATA:STOP {fs_hori_len}")
 
-    ss_hori_len = ss_preambles['CH1']['NR_Pt']
-    ss.write('DATA:WIDTH 1')
-    ss.write('DATA:ENCDG RIbinary')
-    ss.write('DATA:START 1')         # Set start index of measurement buffer data
-    ss.write(f"DATA:STOP {ss_hori_len}")
+    if ss != 0:
+        ss_hori_len = ss_preambles['CH1']['NR_Pt']
+        ss.write('DATA:WIDTH 1')
+        ss.write('DATA:ENCDG RIbinary')
+        ss.write('DATA:START 1')         # Set start index of measurement buffer data
+        ss.write(f"DATA:STOP {ss_hori_len}")
 
     print('fs and ss preset done.')
-    return fs, ss, fs_hori_len, ss_hori_len
+    if fs != 0 and ss != 0:
+        return fs, ss, fs_hori_len, ss_hori_len
+    elif fs != 0 and ss == 0:
+        return fs, ss, fs_hori_len, 0
+    elif fs == 0 and ss != 0:
+        return fs, ss, 0, ss_hori_len
+    else:
+        print('No scope available.')
 
 
 def pull_wfm_all_ch(fs_address, ss_address, fs_channel_ls, ss_channel_ls, fs_hori_len, ss_hori_len):
-    try:
+    fs_flag = 1
+    ss_flag = 1
+    if fs_hori_len != 0:
         fs_address.write('CURVEnext?')
-    except:
+    else:
+        fs_flag = 0
         print('Pulling data from FS error!')
-    try:
+
+    if ss_hori_len != 0:
         # ss_address.write('CURVE?')
         ss_address.write('CURVEnext?')      # use CURVEnext for the second scope to avoid mis-matching issue between two scopes.
-    except:
+    else:
+        ss_flag = 0
         print('Pulling data from SS error!')
         
-
-    fs_bin = fs_address.read_raw()
-    ss_bin = ss_address.read_raw()
+    if fs_flag == 1:
+        fs_bin = fs_address.read_raw()
+    if ss_flag == 1:
+        ss_bin = ss_address.read_raw()        
 
     fs_wfm_raw = {}
     ss_wfm_raw = {}
@@ -213,7 +232,7 @@ def get_WFM_advance(raw_wfm, channel_list, ch_param):
             wfm_all_ch[channel].append(wfm)
         return wfm_all_ch, xincr, hori_len, ch_scale
     except:
-        print('Scope communication error!')
+        # print('Scope communication error!')
         wfm_all_ch_fake = {'CH1': [[0, 0]], 'CH2': [[0, 0]], 'CH3': [[0, 0]], 'CH4': [[0, 0]]}
         return wfm_all_ch_fake, 0, 0, {'CH1': 0, 'CH2': 0, 'CH3': 0, 'CH4': 0}
 
